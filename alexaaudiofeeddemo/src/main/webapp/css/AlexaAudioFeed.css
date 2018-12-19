@@ -1,0 +1,28 @@
+*{font-family: sans-serif; box-sizing: border-box;}
+
+.main-container{display: flex;}
+.main-sidebar{width: 300px;border-right: solid 1px #ccc;min-height: 100vh;}
+.main-logo{border-bottom: solid 1px #ccc; padding: 24px; text-align: center;}
+.main-logo h3{margin-top: 0;  font-size: 2.4rem; }
+
+.main-sidebar small{white-space: nowrap; font-family: monospace;display: inline-block; background-color: #bbb; color: #fff; 
+				text-align: center; letter-spacing: .5px; border-radius: 2px;padding: 0 8px; align-items: center;   font-size: 1.2rem;}
+
+.main-body{flex-grow:1;}
+.main-body .header{padding-left: 100px; border-bottom: solid 1px #ccc;margin-bottom: 0;}
+.main-body .container-content{padding: 24px 100px; }
+
+.main-body .table{border: solid 0px  #ccc; width: auto;background-color: #fefefe;}
+.main-body .addNewsPanel{display: flex;}
+.main-body .addNewsPanelItem{padding: 12px 0; }
+.main-body .addNewsPanelItem .material-icons{font-style: normal; background-color: #333;}
+.main-body .addNewsUploadFileArea{padding: 12px 48px; flex-grow: 1;}
+
+
+
+.upload-file-drop-area { border: 2px dashed #ccc; border-radius: 4px; text-align: center; font-size: 16pt; font-weight: bold;  padding: .5em;}
+.upload-file-drop-area .desc{font-size: 11pt; color: #999; font-weight: normal;}
+.upload-file-drop-area-hover {background-color: #D9F1FF; border-color: #0085CC; color: #0085CC; }
+.upload-file-selectfile-button { padding: .5em; margin-top: 10px;background-color: #3f5152; color: white; cursor: pointer; border-radius: 2px; font-size: 16pt; 
+	font-weight: bold; border: 2px solid #3f5152; text-align: center; display: inline-block;}
+.upload-file-selectfile-button:hover{background-color: #162c2d;border-color: #162c2d;}
