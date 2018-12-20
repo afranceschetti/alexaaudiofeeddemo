@@ -44,6 +44,11 @@ import org.csi.demo.alexa.audiofeed.util.AudioNewsHelper;
 import org.csi.demo.alexa.audiofeed.util.json.JSonHelper;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
+import net.bramp.ffmpeg.FFprobe;
+import net.bramp.ffmpeg.probe.FFmpegFormat;
+import net.bramp.ffmpeg.probe.FFmpegProbeResult;
+import net.bramp.ffmpeg.probe.FFmpegStream;
+
 @Path("/manage")
 public class AudioFileService {
 
@@ -71,12 +76,36 @@ public class AudioFileService {
 			objFile.delete();
 
 		}
-
 		saveToFile(uploadedInputStream, uploadedFileLocation);
 
 		// String output = "{\"result\":\"ok\", \"detail\": \"File uploaded via
 		// Jersey based RESTFul Webservice to: " + uploadedFileLocation +"\"}";
 
+		FFprobe ffprobe;
+		try {
+			ffprobe = new FFprobe("/appserv/jboss/ajb620/alexa/audio/ffmpeg/ffmpeg-4.1-32bit-static/ffprobe");
+		
+			FFmpegProbeResult probeResult = ffprobe.probe(uploadedFileLocation);
+
+			FFmpegFormat format = probeResult.getFormat();
+			System.out.format("%nFile: '%s' ; Format: '%s' ; Duration: %.3fs", 
+				format.filename, 
+				format.format_long_name,
+				format.duration
+			);
+	
+			FFmpegStream stream = probeResult.getStreams().get(0);
+			System.out.format("%nCodec: '%s' ; Width: %dpx ; Height: %dpx",
+				stream.codec_long_name,
+				stream.width,
+				stream.height
+			);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		
+		
 		return "";
 
 	}
