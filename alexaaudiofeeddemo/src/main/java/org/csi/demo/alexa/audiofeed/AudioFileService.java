@@ -21,6 +21,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.DirectoryNotEmptyException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -45,7 +48,7 @@ import org.glassfish.jersey.media.multipart.FormDataParam;
 public class AudioFileService {
 
 	@GET
-	@Path("/audionews")
+	@Path("/news")
 	@Produces({ "application/json" })
 	public String getAudioFeedJSON() {
 
@@ -55,7 +58,7 @@ public class AudioFileService {
 	}
 
 	@POST
-	@Path("/audionews/{newstitle}")
+	@Path("/news/audio/{newstitle}")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces({ "application/json" })
 	public String uploadFile(@FormDataParam("file") InputStream uploadedInputStream, @PathParam("newstitle") String newstitle) {
@@ -99,7 +102,7 @@ public class AudioFileService {
 	}
 
 	@DELETE
-	@Path("/audionews/{{filename}}")
+	@Path("/news/{filename}")
 	@Produces({ "application/json" })
 	public Response deleteFile(@PathParam("filename") String filename) {
 		File baseDir = new File(Config.getInstance().getAudiofeedBaseDir());
@@ -107,7 +110,10 @@ public class AudioFileService {
 		if (!audio.getParent().equals(baseDir.getPath()))
 			return Response.status(Status.FORBIDDEN).build();
 
-		audio.delete();
+		boolean ok = audio.delete();
+		//System.out.println("delete ok " + ok);
+
+		
 
 		return Response.ok().build();
 	}

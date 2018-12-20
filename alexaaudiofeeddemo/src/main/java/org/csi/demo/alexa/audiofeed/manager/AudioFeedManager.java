@@ -41,7 +41,7 @@ public class AudioFeedManager {
 		int counter = 0;
 		if (filesList != null)
 			for (File f : filesList) {
-				if (!f.isDirectory() && f.getName().endsWith(".mp3")) {
+				if (!f.isDirectory() && (f.getName().endsWith(".mp3") || f.getName().endsWith(".txt"))) {
 					audioFeedList.add(new AudioFeed(f.getName()));
 					counter++;
 					if (counter == limit)

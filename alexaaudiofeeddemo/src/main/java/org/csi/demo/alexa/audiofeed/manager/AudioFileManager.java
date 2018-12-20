@@ -29,7 +29,7 @@ public class AudioFileManager {
 		int counter= 0;
 		if (filesList != null)
 			for (File f : filesList) {
-				if (!f.isDirectory() && f.getName().endsWith(".mp3")) {
+				if (!f.isDirectory() && (f.getName().endsWith(".mp3") || f.getName().endsWith(".txt"))) {
 					audiofileList.add(new AudioFile(f));
 					counter++;
 					if(counter == limit)
