@@ -22,7 +22,7 @@ public class AudioNewsHelper {
 	}
 
 	public static String getAudioStreamUrlFromFilename(String filename) {
-		return Config.getInstance().getAudiofeedBaseUrl() + filename;
+		return Config.getInstance().getAudioStreamBaseUrl() + filename;
 	}
 
 	public static String createFilenameFromTitle(String title) {

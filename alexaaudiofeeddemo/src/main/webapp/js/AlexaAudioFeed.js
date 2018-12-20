@@ -12,6 +12,8 @@ var app = angular.module('alexaAudioFeed', [
 
 app.config(['$routeProvider', function($routeProvider) {
 	$routeProvider.when('/manage', {templateUrl: 'partials/manage/file.html?', controller:'audiofileCtrl'});
+	$routeProvider.when('/manage/newslist', {templateUrl: 'partials/manage/newslist.html?', controller:'audiofileCtrl'});
+	$routeProvider.when('/manage/addnews', {templateUrl: 'partials/manage/addnews.html?', controller:'audiofileCtrl'});
 	$routeProvider.otherwise({redirectTo: '/manage'});
 }]);
 
@@ -25,14 +27,24 @@ appServices.factory('alexaAudioFeedService', [ "$http", "$upload", function($htt
 	alexaAudioFeedService.loadAudiofiles = function() {
 		return $http({
 			method : 'GET',
-			url : 'http://localhost:8080/alexaaudiofeeddemo/api/manage/audionews'
+			url: Constants.AUDIOFEED_MANAGE_BASE_URL
+			//url : 'http://localhost:8080/alexaaudiofeeddemo/api/manage/audionews'
 			//url : 'http://int-sdnet-up1.sdp.csi.it:10110/alexaaudiofeeddemo/api/manage/audionews'
 		});
 	};
 	
+	alexaAudioFeedService.deleteAudiofiles = function(filename) {
+		return $http({
+			method : 'DELETE',
+			url: Constants.AUDIOFEED_MANAGE_BASE_URL+filename
+			//url : 'http://localhost:8080/alexaaudiofeeddemo/api/manage/audionews'
+			//url : 'http://int-sdnet-up1.sdp.csi.it:10110/alexaaudiofeeddemo/api/manage/audionews'
+		});
+	};
 	alexaAudioFeedService.uploadNews  = function(news){
 		console.log("uploadNews",news);
-		var urlWithParam =  'http://localhost:8080/alexaaudiofeeddemo/api/manage/audionews/'+news.title; 
+		var urlWithParam =  Constants.AUDIOFEED_MANAGE_BASE_URL+news.title; 
+		//var urlWithParam =  'http://localhost:8080/alexaaudiofeeddemo/api/manage/audionews/'+news.title; 
 		//var urlWithParam =  'http://int-sdnet-up1.sdp.csi.it:10110/alexaaudiofeeddemo/api/manage/audionews/'+news.title; 
 
 		var postData = {newstitle: news.title};
@@ -87,6 +99,15 @@ appDirectives.directive('appVersion', [ 'version', function(version) {
 } ]);
 
 
+appDirectives.directive('mainSidebar', function() {
+	return {
+		restrict : 'E',
+		templateUrl : 'partials/common/main-sidebar.html?',
+	};
+});
+
+
+
 
 var appControllers = angular.module('alexaAudioFeed.controllers', []);
 
@@ -117,6 +138,9 @@ appControllers.controller('audiofileCtrl', [ '$scope', 'alexaAudioFeedService',
 		}
 		
 	};
+	$scope.clearFileSelection = function(){
+		$scope.newNews.selectedFile = null;
+	};
 	
 	$scope.uploadFile = function(){
 		console.log("uploadFile", $scope.newNews);
@@ -131,6 +155,14 @@ appControllers.controller('audiofileCtrl', [ '$scope', 'alexaAudioFeedService',
 			});
 		}
 
+	};
+	
+	$scope.deleteFile = function(filename){
+		console.log("deleteFile", filename);
+		alexaAudioFeedService.deleteAudiofiles(filename).then(function(response){
+			console.log("loadAudiofiles", response);
+			loadAudiofiles();
+		});	
 	};
 	
 	

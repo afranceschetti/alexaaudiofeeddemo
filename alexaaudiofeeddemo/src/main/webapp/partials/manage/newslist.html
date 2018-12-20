@@ -1,0 +1,25 @@
+<h1 class='header'>Gestione News</h1>
+<div class='container-content'>
+	<h4>Ultime news inserite</h4>
+	<table class='table '>
+		<thead>
+			<tr>
+				<th>Titolo</th>
+				<th>Data</th>
+				<th>Dimensione</th>
+				<th>Preview</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat='af in audiofiles track by $index'>
+				<td>{{af.name}}</td>
+				<td>{{af.date|date}}</td>
+				<td><audio controls>
+						<source src="{{af.streamUrl| trustedAudioUrl}}" type="audio/mpeg">
+					</audio></td>
+				<td><a href ng-click='deleteFile(af)'>Elimina</a></td>
+			</tr>
+		</tbody>
+	</table>
+</div>

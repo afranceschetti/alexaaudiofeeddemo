@@ -5,8 +5,10 @@
 .main-logo{border-bottom: solid 1px #ccc; padding: 24px; text-align: center;}
 .main-logo h3{margin-top: 0;  font-size: 2.4rem; }
 
-.main-sidebar small{white-space: nowrap; font-family: monospace;display: inline-block; background-color: #bbb; color: #fff; 
+.main-logo small{white-space: nowrap; font-family: monospace;display: inline-block; background-color: #bbb; color: #fff; line-height: 1.6rem; font-weight: normal;
 				text-align: center; letter-spacing: .5px; border-radius: 2px;padding: 0 8px; align-items: center;   font-size: 1.2rem;}
+
+strong {font-weight: 600;}
 
 .main-body{flex-grow:1;}
 .main-body .header{padding-left: 100px; border-bottom: solid 1px #ccc;margin-bottom: 0;}
@@ -15,10 +17,11 @@
 .main-body .table{border: solid 0px  #ccc; width: auto;background-color: #fefefe;}
 .main-body .addNewsPanel{display: flex;}
 .main-body .addNewsPanelItem{padding: 12px 0; }
-.main-body .addNewsPanelItem .material-icons{font-style: normal; background-color: #333;}
+.main-body .addNewsPanelItem .wizard-icons{font-style: normal; background-color: #333;}
 .main-body .addNewsUploadFileArea{padding: 12px 48px; flex-grow: 1;}
 
-
+.new-file-info-panel{font-size: .9rem; margin: 1em 0 2em 0;}
+.btn-verysmall { height: 28.4px;line-height: 28.4px;font-size: 11px;}
 
 .upload-file-drop-area { border: 2px dashed #ccc; border-radius: 4px; text-align: center; font-size: 16pt; font-weight: bold;  padding: .5em;}
 .upload-file-drop-area .desc{font-size: 11pt; color: #999; font-weight: normal;}

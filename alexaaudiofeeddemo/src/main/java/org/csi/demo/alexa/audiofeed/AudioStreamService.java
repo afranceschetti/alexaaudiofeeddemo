@@ -96,7 +96,7 @@ public class AudioStreamService {
 
 		final int len = to - from + 1;
 		final MediaStreamer streamer = new MediaStreamer(len, raf);
-		Response.ResponseBuilder res = Response.status(Response.Status.PARTIAL_CONTENT).entity(streamer).header("Accept-Ranges", "bytes").header("Content-Range", responseRange)
+		Response.ResponseBuilder res = Response.ok(streamer).header("Accept-Ranges", "bytes").header("Content-Range", responseRange)
 				.header(HttpHeaders.CONTENT_LENGTH, streamer.getLenth()).header(HttpHeaders.LAST_MODIFIED, new Date(asset.lastModified()));
 		return res.build();
 	}

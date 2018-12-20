@@ -24,12 +24,15 @@ import java.io.OutputStream;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.csi.demo.alexa.audiofeed.config.Config;
 import org.csi.demo.alexa.audiofeed.manager.AudioFileManager;
@@ -56,7 +59,7 @@ public class AudioFileService {
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces({ "application/json" })
 	public String uploadFile(@FormDataParam("file") InputStream uploadedInputStream, @PathParam("newstitle") String newstitle) {
-		String filename = AudioNewsHelper.createFilenameFromTitle(newstitle)+".mp3";
+		String filename = AudioNewsHelper.createFilenameFromTitle(newstitle) + ".mp3";
 		String uploadedFileLocation = Config.getInstance().getAudiofeedBaseDir() + filename;
 		System.out.println(uploadedFileLocation);
 		// save it
@@ -68,7 +71,8 @@ public class AudioFileService {
 
 		saveToFile(uploadedInputStream, uploadedFileLocation);
 
-		//String output = "{\"result\":\"ok\", \"detail\": \"File uploaded via Jersey based RESTFul Webservice to: " + uploadedFileLocation +"\"}";
+		// String output = "{\"result\":\"ok\", \"detail\": \"File uploaded via
+		// Jersey based RESTFul Webservice to: " + uploadedFileLocation +"\"}";
 
 		return "";
 
@@ -92,6 +96,20 @@ public class AudioFileService {
 			e.printStackTrace();
 		}
 
+	}
+
+	@DELETE
+	@Path("/audionews/{{filename}}")
+	@Produces({ "application/json" })
+	public Response deleteFile(@PathParam("filename") String filename) {
+		File baseDir = new File(Config.getInstance().getAudiofeedBaseDir());
+		File audio = new File(baseDir, filename);
+		if (!audio.getParent().equals(baseDir.getPath()))
+			return Response.status(Status.FORBIDDEN).build();
+
+		audio.delete();
+
+		return Response.ok().build();
 	}
 
 }

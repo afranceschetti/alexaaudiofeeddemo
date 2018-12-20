@@ -22,6 +22,8 @@ public class AudioFeed {
 		this.setUid(AudioNewsHelper.getUUIDFromFilename(filename));
 		this.setTitleText(AudioNewsHelper.getNameFromFilename(filename));
 		this.setUpdateDate(AudioNewsHelper.getDateFromFilename(filename));
+		this.setMainText(AudioNewsHelper.getNameFromFilename(filename));
+
 //		
 //		String[] title_date = filename.replace(".mp3", "").split("_");
 //		this.setTitleText(title_date[1]);
