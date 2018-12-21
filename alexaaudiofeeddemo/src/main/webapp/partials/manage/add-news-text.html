@@ -1,0 +1,36 @@
+<div class='container-content'>
+	<h4>Aggiungi una news testuale</h4>
+	<p>Crea una nuova news, inserisci il titolo e il testo</p>
+	<div class="feedback-panel {{feedback.color}} z-depth-1" ng-if='feedback.message'>
+		<i class="material-icons {{feedback.color}}">{{feedback.icon}}</i>  
+		<div class='feedback-message'>{{feedback.message}}</div>
+		<a href ng-click='feedback.message=null'>&times;</a>
+	</div>
+	<div class='addNewsPanel'>
+		<div class='addNewsPanelItem addNewsTitlePanel'>
+			<h5>
+				<a class="btn-floating disabled"><i class="wizard-icons">1</i></a> Inserisci il titolo
+			</h5>
+			<strong>Titolo della news </strong><input type='text' ng-model='newNews.title' placeholder='Titolo news...'>
+		</div>
+		<div class='addNewsPanelItem addNewsUploadFileArea'>
+			<h5>
+				<a class="btn-floating disabled"><i class="wizard-icons">2</i></a> Aggiungi il contenuto della news
+			</h5>
+			<div>
+				<textarea id='newsMainText' class="materialize-textarea" ng-model='newNews.mainText' placeholder='Contenuto news...'  rows="4"></textarea>
+			</div>
+		</div>
+		<div class='addNewsPanelItem addNewsUploadFilePreview'>
+			<h5>
+				<a class="btn-floating disabled"><i class="wizard-icons">3</i></a> Carica
+			</h5>
+			<p>Se &egrave; tutto corretto carica sul server</p>
+			<div>
+				<div class='addNewsPanelItem'>
+					<a href class='btn' ng-click='uploadTextNews()'>Carica</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

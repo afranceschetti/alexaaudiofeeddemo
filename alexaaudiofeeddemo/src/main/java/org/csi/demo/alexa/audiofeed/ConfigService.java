@@ -31,6 +31,7 @@ public class ConfigService {
 	public String getAudioFeedJSON() {
 		StringBuffer sb = new StringBuffer("");
 		sb.append("var Constants = Constants || {};\n\n");
+		sb.append("Constants." + Config.AUDIOFEED_FEED_BASE_URL + "='" + Config.getInstance().getAudioFeedBaseUrl() + "';\n");
 		sb.append("Constants." + Config.AUDIOFEED_STREAM_BASE_URL + "='" + Config.getInstance().getAudioStreamBaseUrl() + "';\n");
 		sb.append("Constants." + Config.AUDIOFEED_MANAGE_BASE_URL + "='" + Config.getInstance().getAudioManageBaseUrl() + "';\n");
 

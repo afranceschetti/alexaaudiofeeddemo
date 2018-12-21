@@ -11,10 +11,11 @@ var app = angular.module('alexaAudioFeed', [
 	]);
 
 app.config(['$routeProvider', function($routeProvider) {
-	$routeProvider.when('/manage', {templateUrl: 'partials/manage/file.html?', controller:'audiofileCtrl'});
-	$routeProvider.when('/manage/newslist', {templateUrl: 'partials/manage/newslist.html?', controller:'audiofileCtrl'});
-	$routeProvider.when('/manage/addnews', {templateUrl: 'partials/manage/addnews.html?', controller:'audiofileCtrl'});
-	$routeProvider.otherwise({redirectTo: '/manage'});
+	//$routeProvider.when('/manage', {templateUrl: 'partials/manage/file.html?', controller:'audiofileCtrl'});
+	$routeProvider.when('/manage/news/:tab', {templateUrl: 'partials/manage/file.html?', controller:'audiofileCtrl'});
+	//$routeProvider.when('/manage/addnewsaudio', {templateUrl: 'partials/manage/add-news-audio.html?', controller:'audiofileCtrl'});
+	//$routeProvider.when('/manage/addnewstext', {templateUrl: 'partials/manage/add-news-text.html?', controller:'audiofileCtrl'});
+	$routeProvider.otherwise({redirectTo: '/manage/news/list'});
 }]);
 
 
@@ -28,8 +29,6 @@ appServices.factory('alexaAudioFeedService', [ "$http", "$upload", function($htt
 		return $http({
 			method : 'GET',
 			url: Constants.AUDIOFEED_MANAGE_BASE_URL
-			//url : 'http://localhost:8080/alexaaudiofeeddemo/api/manage/audionews'
-			//url : 'http://int-sdnet-up1.sdp.csi.it:10110/alexaaudiofeeddemo/api/manage/audionews'
 		});
 	};
 	
@@ -37,15 +36,11 @@ appServices.factory('alexaAudioFeedService', [ "$http", "$upload", function($htt
 		return $http({
 			method : 'DELETE',
 			url: Constants.AUDIOFEED_MANAGE_BASE_URL+filename
-			//url : 'http://localhost:8080/alexaaudiofeeddemo/api/manage/audionews'
-			//url : 'http://int-sdnet-up1.sdp.csi.it:10110/alexaaudiofeeddemo/api/manage/audionews'
 		});
 	};
-	alexaAudioFeedService.uploadNews  = function(news){
+	alexaAudioFeedService.uploadAudioNews  = function(news){
 		console.log("uploadNews",news);
-		var urlWithParam =  Constants.AUDIOFEED_MANAGE_BASE_URL+news.title; 
-		//var urlWithParam =  'http://localhost:8080/alexaaudiofeeddemo/api/manage/audionews/'+news.title; 
-		//var urlWithParam =  'http://int-sdnet-up1.sdp.csi.it:10110/alexaaudiofeeddemo/api/manage/audionews/'+news.title; 
+		var urlWithParam =  Constants.AUDIOFEED_MANAGE_BASE_URL+'audio/'+news.title; 
 
 		var postData = {newstitle: news.title};
 		
@@ -53,11 +48,20 @@ appServices.factory('alexaAudioFeedService', [ "$http", "$upload", function($htt
 			url: urlWithParam,
 			method: 'POST',
 			file: news.selectedFile
-		//	data: postData,
-        //  data: {file: news.selectedFile, 'newstitle': news.title}
-
 		});
 
+	};
+	
+	
+	alexaAudioFeedService.uploadTextNews  = function(news){
+		console.log("uploadNews",news);
+		var urlWithParam =  Constants.AUDIOFEED_MANAGE_BASE_URL+'text/'+news.title; 
+		return $http({
+	          method  : 'POST',
+	          url     : urlWithParam,
+	          data    : 'mainText='+news.mainText,
+	          headers : { 'Content-Type': 'application/x-www-form-urlencoded' } 
+		});
 	};
 	
 	return alexaAudioFeedService;
@@ -81,6 +85,27 @@ appFilters.filter('format_filesize', function() {
 	    }
 		return output;
 	};
+});
+
+appFilters.filter('string_ellipse', function () {
+    return function (text, length, end) {
+    	
+    	if(typeof text === "undefined"  || text == null)
+    		text = "";
+    	
+        if (isNaN(length))
+            length = 10;
+
+        if (end === undefined)
+            end = "...";
+
+        if (text.length <= length || text.length - end.length <= length) {
+            return text;
+        }
+        else {
+            return String(text).substring(0, length-end.length) + end;
+        }
+    };
 });
 
 appFilters.filter('trustedAudioUrl', function($sce) {
@@ -111,20 +136,40 @@ appDirectives.directive('mainSidebar', function() {
 
 var appControllers = angular.module('alexaAudioFeed.controllers', []);
 
-appControllers.controller('audiofileCtrl', [ '$scope', 'alexaAudioFeedService',
-                                          function($scope,alexaAudioFeedService) {
+appControllers.controller('globalCtrl', [ '$scope', '$route', '$location', 'alexaAudioFeedService',
+    function($scope,$route,$location, alexaAudioFeedService) {
+	$scope.navigation = {currentPage: 'news.list'};
+	$scope.feedUrl = Constants.AUDIOFEED_FEED_BASE_URL;
 	
+	$scope.goto = function(target){
+		$scope.navigation.currentPage=target;
+		console.log("manage/"+target.replace(".","/"))
+		$location.path("manage/"+target.replace(".","/"));
+	}
+	
+	
+}]);
+
+appControllers.controller('audiofileCtrl', [ '$scope', '$route', 'alexaAudioFeedService',
+                                          function($scope,$route,alexaAudioFeedService) {
+	$scope.tab  = $route.current.params.tab;
+	console.log("tab",$route.current.params);
+	$scope.alexaMaxNews = 5;
 	$scope.audiofiles = new Array();
 	var loadAudiofiles =  function(){
-			alexaAudioFeedService.loadAudiofiles().then(function(response){
+		$scope.feedbackList = {};
+		alexaAudioFeedService.loadAudiofiles().then(function(response){
 			console.log("loadAudiofiles", response);
 			$scope.audiofiles = response.data;
+			if(response.data.length>$scope.alexaMaxNews)
+				$scope.feedbackList = {message:"Solo le prime 5 news saranno gestite da alexa", color:FEEDBACK_COLOR_INFO, icon: FEEDBACK_ICON_INFO};
+
 		});	
 	};
 	loadAudiofiles();
 	
 	$scope.maxFileSize = 10000000;
-	$scope.newNews = {};
+	$scope.newNews = {selectedFile:null};
 	$scope.onFileSelect = function($files) {
 		console.log("onFileSelect", $files);
 		//$scope.newNews = {};
@@ -132,7 +177,7 @@ appControllers.controller('audiofileCtrl', [ '$scope', 'alexaAudioFeedService',
 		$scope.newNews.selectedFile = $files[0];
 		console.log("onFileSelect", $scope.newNews.selectedFile );
 		if($scope.newNews.selectedFile !=null && $scope.newNews.selectedFile.size>$scope.maxFileSize){
-			$scope.uploadInfo.message = {type:'warning', message: 'File troppo grande'};
+			$scope.feedback.message = {type:'warning', message: 'File troppo grande'};
 			$scope.choosenFileSize = scope.newNews.selectedFile.size; 
 			$scope.newNews.selectedFile = null;
 		}
@@ -142,12 +187,31 @@ appControllers.controller('audiofileCtrl', [ '$scope', 'alexaAudioFeedService',
 		$scope.newNews.selectedFile = null;
 	};
 	
+	var FEEDBACK_COLOR_INFO = 'light-blue lighten-4';
+	var FEEDBACK_ICON_INFO = 'info_outline';
+	var FEEDBACK_COLOR_SUCCESS = 'light-green lighten-3';
+	var FEEDBACK_ICON_SUCCESS = 'check';
+	var FEEDBACK_COLOR_WARNING = 'yellow lighten-2';
+	var FEEDBACK_ICON_WARNING = 'warning ';
+	var FEEDBACK_COLOR_ERROR = 'red  lighten-3';
+	var FEEDBACK_ICON_ERROR = 'error_outline';
+	$scope.feedback = {};
+	
 	$scope.uploadFile = function(){
 		console.log("uploadFile", $scope.newNews);
-		if(typeof $scope.newNews != 'undefined' && $scope.newNews.selectedFile.name!= null){
-			alexaAudioFeedService.uploadNews($scope.newNews).success(function(data, status, headers, config){
+		$scope.feedback = {};
+		if($scope.newNews.selectedFile == null && ($scope.newNews.title == null || $scope.newNews.title ==""))
+			$scope.feedback = {message:"Specificare il titolo e selezionare un file audio", color:FEEDBACK_COLOR_WARNING, icon: FEEDBACK_ICON_WARNING};
+		else if($scope.newNews.title == null || $scope.newNews.title =="")
+			$scope.feedback = {message:"Specificare il titolo", color:FEEDBACK_COLOR_WARNING, icon: FEEDBACK_ICON_WARNING};
+		else if($scope.newNews.selectedFile == null)
+			$scope.feedback = {message:"Selezionare un file audio", color:FEEDBACK_COLOR_WARNING, icon: FEEDBACK_ICON_WARNING};
+		else{
+			alexaAudioFeedService.uploadAudioNews($scope.newNews).success(function(data, status, headers, config){
 				console.log("success", data);
+				$scope.feedback = {message:"News caricata correttamente ", color:FEEDBACK_COLOR_SUCCESS, icon: FEEDBACK_ICON_SUCCESS};
 				loadAudiofiles();
+				
 			}).error(
 			function(error){
 				console.log("error", error);
@@ -155,6 +219,29 @@ appControllers.controller('audiofileCtrl', [ '$scope', 'alexaAudioFeedService',
 			});
 		}
 
+	};
+	
+	$scope.uploadTextNews = function(){
+		console.log("uploadTextNews", $scope.newNews);
+		$scope.feedback = {};
+		if(($scope.newNews.mainText == null || $scope.newNews.mainText =="") && ($scope.newNews.title == null || $scope.newNews.title ==""))
+			$scope.feedback = {message:"Specificare il titolo e il contenuto della news", color:FEEDBACK_COLOR_WARNING, icon: FEEDBACK_ICON_WARNING};
+		else if($scope.newNews.title == null || $scope.newNews.title =="")
+			$scope.feedback = {message:"Specificare il titolo", color:FEEDBACK_COLOR_WARNING, icon: FEEDBACK_ICON_WARNING};
+		else if($scope.newNews.mainText == null || $scope.newNews.mainText =="")
+			$scope.feedback = {message:"Specificare il contenuto della news", color:FEEDBACK_COLOR_WARNING, icon: FEEDBACK_ICON_WARNING};
+		else{
+			alexaAudioFeedService.uploadTextNews($scope.newNews).success(function(data, status, headers, config){
+				console.log("success", data);
+				$scope.feedback = {message:"News caricata correttamente ", color:FEEDBACK_COLOR_SUCCESS, icon: FEEDBACK_ICON_SUCCESS};
+				loadAudiofiles();
+			}).error(
+			function(error){
+				console.log("error", error);
+				
+			});
+		}
+		
 	};
 	
 	$scope.deleteFile = function(filename){

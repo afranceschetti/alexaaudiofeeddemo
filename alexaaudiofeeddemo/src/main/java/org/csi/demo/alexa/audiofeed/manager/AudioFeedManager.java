@@ -23,16 +23,6 @@ public class AudioFeedManager {
 	public List<AudioFeed> loadFeedMetadata(Integer limit) {
 		List<AudioFeed> audioFeedList = new LinkedList<AudioFeed>();
 
-		AudioFeed textFeed = new AudioFeed("" + (System.currentTimeMillis()-2000) + "_provaTesto");
-		textFeed.setStreamUrl(null);
-		textFeed.setMainText("prima notizia testo");
-		audioFeedList.add(textFeed);
-
-		AudioFeed textFeed2 = new AudioFeed("" + System.currentTimeMillis()+ "_provaTesto2");
-		textFeed2.setStreamUrl(null);
-		textFeed2.setMainText("Seconda Notizia di testo");
-		audioFeedList.add(textFeed2);
-
 		if (limit == null)
 			limit = 5;
 		// read dir

@@ -18,14 +18,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
-	<div ng-app="alexaAudioFeed" class='main-container'>
+	<div ng-app="alexaAudioFeed" class='main-container' ng-controller='globalCtrl'>
 		<div class='main-sidebar'>
 			<div class='main-logo'>
 				<h3>Coto Voice RSS</h3>
 				<small class='prototipe flow-text z-depth-1'>&lsaquo;prototipo&rsaquo;</small>
 			</div>
 			<div >
-				<!-- <main-sidebar></main-sidebar>-->
+			<main-sidebar></main-sidebar>
 			</div>
 		</div>
     	<div ng-view class='main-body'></div>

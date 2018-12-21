@@ -33,11 +33,13 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.StreamingOutput;
 
 import org.csi.demo.alexa.audiofeed.config.Config;
+import org.csi.demo.alexa.audiofeed.util.AudioNewsHelper;
 import org.csi.demo.alexa.audiofeed.util.MediaStreamer;
 
 @Path("/stream")
@@ -99,6 +101,31 @@ public class AudioStreamService {
 		Response.ResponseBuilder res = Response.ok(streamer).header("Accept-Ranges", "bytes").header("Content-Range", responseRange)
 				.header(HttpHeaders.CONTENT_LENGTH, streamer.getLenth()).header(HttpHeaders.LAST_MODIFIED, new Date(asset.lastModified()));
 		return res.build();
+	}
+
+	@GET
+	@Path("/textnews/{filename}")
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response streamText(@PathParam("filename") String filename) throws Exception {
+		File baseDir = new File(Config.getInstance().getAudiofeedBaseDir());
+		File textfile = new File(baseDir, filename);
+		if (!textfile.getParent().equals(baseDir.getPath()))
+			return Response.status(Status.FORBIDDEN).build();
+
+		String news = AudioNewsHelper.getTextNewsContent(filename);
+//		try (BufferedReader br = new BufferedReader(new FileReader(textfile))) {
+//
+//			String sCurrentLine;
+//
+//			while ((sCurrentLine = br.readLine()) != null) {
+//				news += sCurrentLine;
+//			}
+//
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+
+		return Response.ok(news).build();
 	}
 
 }

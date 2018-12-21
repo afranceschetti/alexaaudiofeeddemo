@@ -1,0 +1,37 @@
+<div class='container-content'>
+	<h4>Ultime news inserite</h4>
+	<div class="feedback-panel {{feedbackList.color}} z-depth-1" ng-if='feedbackList.message'>
+		<i class="material-icons {{feedback.color}}">{{feedbackList.icon}}</i>  
+		<div class='feedback-message'>{{feedbackList.message}}</div>
+		<a href ng-click='feedbackList.message=null'>&times;</a>
+	</div>
+	<table class='table news-list-table'>
+		<thead>
+			<tr>
+				<th></th>
+				<th>Titolo</th>
+				<th>Data</th>
+				<th>Dimensione</th>
+				<th>Preview</th>
+				<th>&nbsp;</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat='af in audiofiles track by $index' ng-class="{'alexa-ignored': $index>(alexaMaxNews-1)}">
+				<td><i class='material-icons' ng-if='af.type=="text"'>comment</i><i class='material-icons' ng-if='af.type=="audio"'>music_note</i></td>
+				<td>{{af.name}}</td>
+				<td><span class=''>{{af.date|date:"dd MMM yyyy HH:mm"}}</span></td>
+				<td><span class=''>{{af.size|format_filesize}}</span></td>
+				<td>
+					<audio controls ng-if='af.type=="audio"'>
+						<source src="{{af.streamUrl| trustedAudioUrl}}" type="audio/mpeg">
+					</audio>
+					<div ng-if='af.type=="text"' class='news-text-preview'>
+						<span title="{{af.content}}">{{af.content|string_ellipse:40}}</span>
+					</div>
+				</td>
+				<td><a href ng-click='deleteFile(af.filename)' title='Elimina'> <i class="material-icons">delete</i></a></td>
+			</tr>
+		</tbody>
+	</table>
+</div>

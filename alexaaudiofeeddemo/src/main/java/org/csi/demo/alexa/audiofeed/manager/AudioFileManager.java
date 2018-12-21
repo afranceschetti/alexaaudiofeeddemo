@@ -22,7 +22,7 @@ public class AudioFileManager {
 		List<AudioFile> audiofileList = new LinkedList<AudioFile>();
 
 		if(limit==null)
-			limit=5;
+			limit=50;
 		// read dir
 		File baseDir = new File(Config.getInstance().getAudiofeedBaseDir());
 		File[] filesList = baseDir.listFiles();

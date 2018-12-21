@@ -21,13 +21,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.DirectoryNotEmptyException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -66,7 +67,7 @@ public class AudioFileService {
 	@Path("/news/audio/{newstitle}")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces({ "application/json" })
-	public String uploadFile(@FormDataParam("file") InputStream uploadedInputStream, @PathParam("newstitle") String newstitle) {
+	public String uploadAudioNews(@FormDataParam("file") InputStream uploadedInputStream, @PathParam("newstitle") String newstitle) {
 		String filename = AudioNewsHelper.createFilenameFromTitle(newstitle) + ".mp3";
 		String uploadedFileLocation = Config.getInstance().getAudiofeedBaseDir() + filename;
 		System.out.println(uploadedFileLocation);
@@ -130,6 +131,30 @@ public class AudioFileService {
 
 	}
 
+	
+	@POST
+	@Path("/news/text/{newstitle}")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces({ "application/json" })
+	public String uploadTextNews(@PathParam("newstitle") String newstitle, @FormParam("mainText") String mainText) throws IOException {
+		String filename = AudioNewsHelper.createFilenameFromTitle(newstitle) + ".txt";
+		String uploadedFileLocation = Config.getInstance().getAudiofeedBaseDir() + filename;
+		System.out.println(uploadedFileLocation);
+		// save it
+		File objFile = new File(uploadedFileLocation);
+		if (objFile.exists()) {
+			objFile.delete();
+
+		}
+		
+		List<String> lines = new ArrayList<>();
+		lines.add(mainText);
+		Files.write(objFile.toPath(), lines, Charset.forName("UTF-8"));
+
+		return "";
+
+	}
+	
 	@DELETE
 	@Path("/news/{filename}")
 	@Produces({ "application/json" })
