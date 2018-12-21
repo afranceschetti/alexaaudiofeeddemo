@@ -29,6 +29,8 @@ public class AudioFile {
 		this.setSize(audiofile.length());
 		if(getType()=="text")
 			this.setContent(AudioNewsHelper.getTextNewsContent(audiofile.getName()));
+		else 
+			this.setStreamUrl(AudioNewsHelper.getAudioStreamUrlFromFilename(audiofile.getName()));
 
 	}
 

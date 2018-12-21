@@ -22,7 +22,6 @@ public class AudioFeed {
 		this.setUid(AudioNewsHelper.getUUIDFromFilename(filename));
 		this.setTitleText(AudioNewsHelper.getNameFromFilename(filename));
 		this.setUpdateDate(AudioNewsHelper.getDateFromFilename(filename));
-		this.setMainText(AudioNewsHelper.getNameFromFilename(filename));
 
 //		
 //		String[] title_date = filename.replace(".mp3", "").split("_");
@@ -31,7 +30,14 @@ public class AudioFeed {
 //		
 //		Date d = new Date(Long.parseLong(title_date[0]));
 //		this.setUpdateDate(d);
-		this.setStreamUrl(AudioNewsHelper.getAudioStreamUrlFromFilename(filename));
+		
+		if(AudioNewsHelper.getTypeFromFilename(filename)=="text")
+			this.setMainText(AudioNewsHelper.getTextNewsContent(filename));
+		else {
+			this.setMainText(AudioNewsHelper.getNameFromFilename(filename));
+			this.setStreamUrl(AudioNewsHelper.getAudioStreamUrlFromFilename(filename));
+		}
+		
 	}
 
 	public String getUid() {

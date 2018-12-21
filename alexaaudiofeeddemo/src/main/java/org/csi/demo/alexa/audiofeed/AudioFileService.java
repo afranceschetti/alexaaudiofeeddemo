@@ -24,6 +24,8 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -59,7 +61,14 @@ public class AudioFileService {
 	public String getAudioFeedJSON() {
 
 		List<AudioFile> audiofiles = AudioFileManager.getInstance().loadAudioFile(null);
-
+		Collections.sort(audiofiles, new Comparator<AudioFile>() {
+			@Override
+			public int compare(AudioFile lhs, AudioFile rhs) {
+				// -1 - less than, 1 - greater than, 0 - equal, all inversed for
+				// descending
+				return lhs.getDate().getTime() > rhs.getDate().getTime() ? -1 : (lhs.getDate().getTime() < rhs.getDate().getTime()) ? 1 : 0;
+			}
+		});
 		return JSonHelper.getInstance().toJson(audiofiles);
 	}
 
