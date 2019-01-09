@@ -8,7 +8,7 @@ public class JSonHelper {
 
 	public static Gson getInstance() {
 		if (gson == null)
-			gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss'.0Z'").create();
+			gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss'.0'Z").create();
 		return gson;
 	}
 

@@ -28,14 +28,10 @@ public class AudioFeedManager {
 		// read dir
 		File baseDir = new File(Config.getInstance().getAudiofeedBaseDir());
 		File[] filesList = baseDir.listFiles();
-		int counter = 0;
 		if (filesList != null)
 			for (File f : filesList) {
 				if (!f.isDirectory() && (f.getName().endsWith(".mp3") || f.getName().endsWith(".txt"))) {
 					audioFeedList.add(new AudioFeed(f.getName()));
-					counter++;
-					if (counter == limit)
-						break;
 				}
 			}
 
@@ -47,6 +43,10 @@ public class AudioFeedManager {
 				return lhs.getUpdateDate().getTime() > rhs.getUpdateDate().getTime() ? -1 : (lhs.getUpdateDate().getTime() < rhs.getUpdateDate().getTime()) ? 1 : 0;
 			}
 		});
+		
+		if(audioFeedList.size()>limit)
+			return audioFeedList.subList(0, limit);
+		
 		return audioFeedList;
 	};
 
